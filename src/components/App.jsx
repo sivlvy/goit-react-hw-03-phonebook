@@ -5,11 +5,34 @@ import { Filter } from './Filter/Filter';
 import { ContactList } from './ContactList/ContactList';
 import { Notify } from 'notiflix';
 
+
+const LOCASSTORAGE_KEY = 'contacts-key'
+
+
+
 class App extends Component {
 	state = {
 		contacts: [],
 		filter: '',
 	};
+	componentDidMount() {
+		const savedState = localStorage.getItem(LOCASSTORAGE_KEY)
+
+		if(savedState){
+			const savedContacts = JSON.parse(localStorage.getItem(LOCASSTORAGE_KEY))
+			this.setState({contacts: savedContacts})
+		}
+	}
+	componentDidUpdate(_, prevState) {
+		const {contacts} = this.state;
+		if(prevState.contacts !== contacts) {
+			if(!contacts.length){
+				localStorage.removeItem(LOCASSTORAGE_KEY)
+			} else {
+				localStorage.setItem(LOCASSTORAGE_KEY, JSON.stringify(contacts))
+			}
+		}
+	}
 
 	addContact = newContact => {
 		const { contacts } = this.state;
